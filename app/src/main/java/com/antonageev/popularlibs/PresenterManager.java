@@ -31,7 +31,10 @@ public class PresenterManager {
     }
 
     public <P extends BasePresenter<?, ?>> P restorePresenter(Bundle savedInstanceState) {
-        long presenterId = savedInstanceState.getLong(KEY_PRESENTER_ID);
+        long presenterId = savedInstanceState.getLong(KEY_PRESENTER_ID, -1);
+
+        if (!presenters.containsKey(presenterId)) return (P) new Presenter();
+
         P presenter = (P) presenters.get(presenterId);
         presenters.remove(presenterId);
         return presenter;
