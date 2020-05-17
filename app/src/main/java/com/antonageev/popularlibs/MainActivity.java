@@ -4,45 +4,100 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.antonageev.popularlibs.presenters.MainPresenter;
+
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
 
 public class MainActivity extends AppCompatActivity implements MainView, View.OnClickListener {
-    private Presenter presenter;
+    private MainPresenter mainPresenter;
     private Button btnCounter;
     private Button btnCounter1;
     private Button btnCounter2;
     private Button btnCounter3;
+    private Button btnMove;
+    private final String TAG = MainActivity.class.getSimpleName();
+
+    Observable<Integer> observable;
+    Observer<Integer> observer;
 
     @Override
+    @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnCounter1 = findViewById(R.id.btnCounter1);
-        btnCounter2 = findViewById(R.id.btnCounter2);
-        btnCounter3 = findViewById(R.id.btnCounter3);
+        initViews();
+        setListeners();
+
+        if (savedInstanceState == null) {
+            mainPresenter = new MainPresenter();
+        } else {
+            mainPresenter = PresenterManager.getInstance().restorePresenter(savedInstanceState);
+        }
+
+        observer = new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                mainPresenter.buttonClick(integer);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+    }
+
+    private void setListeners() {
         btnCounter1.setOnClickListener(this);
         btnCounter2.setOnClickListener(this);
         btnCounter3.setOnClickListener(this);
+        btnMove.setOnClickListener(this);
+    }
 
-        if (savedInstanceState == null) {
-            presenter = new Presenter();
-        } else {
-            presenter = PresenterManager.getInstance().restorePresenter(savedInstanceState);
-        }
-
+    private void initViews() {
+        btnCounter1 = findViewById(R.id.btnCounter1);
+        btnCounter2 = findViewById(R.id.btnCounter2);
+        btnCounter3 = findViewById(R.id.btnCounter3);
+        btnMove = findViewById(R.id.moveToAnotherActivity);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
-        presenter.buttonClick(v.getId());
+        if (v.getId() == R.id.moveToAnotherActivity) {
+            Intent intent = new Intent(this, SecondActivity.class);
+            startActivity(intent);
+            return;
+        }
+
+        observable = Observable.just(v.getId());
+        observable.subscribe(observer);
     }
 
     @Override
@@ -54,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        PresenterManager.getInstance().savePresenter(presenter, outState);
+        PresenterManager.getInstance().savePresenter(mainPresenter, outState);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -68,12 +123,12 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.bindView(this);
+        mainPresenter.bindView(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.unbindView();
+        mainPresenter.unbindView();
     }
 }

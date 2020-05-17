@@ -1,4 +1,4 @@
-package com.antonageev.popularlibs;
+package com.antonageev.popularlibs.presenters;
 
 public abstract class BasePresenter<M, V> {
     protected M model;
