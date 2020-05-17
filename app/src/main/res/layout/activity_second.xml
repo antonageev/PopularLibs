@@ -21,6 +21,15 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
+        android:id="@+id/startBus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/eventBusBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/eventBusBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,5 +53,21 @@
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/eventBusBtn"
         app:layout_constraintStart_toEndOf="@id/eventBusBtn"/>
+
+    <Button
+        android:id="@+id/stopLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="@id/eventTextView1"
+        app:layout_constraintTop_toBottomOf="@id/eventTextView1" />
+
+    <Button
+        android:id="@+id/stopRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="@id/eventTextView2"
+        app:layout_constraintTop_toBottomOf="@id/eventTextView2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

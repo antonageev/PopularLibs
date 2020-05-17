@@ -1,28 +1,23 @@
 package com.antonageev.popularlibs;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.concurrent.TimeUnit;
 
-
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
@@ -31,6 +26,9 @@ public class SecondActivity extends AppCompatActivity {
     private TextView textView;
     TextWatcher watcher;
     Button eventBusBtn;
+    Button stopLeft;
+    Button stopRight;
+    Button startBus;
     TextView eventTextView1;
     TextView eventTextView2;
     PublishSubject subject;
@@ -38,8 +36,8 @@ public class SecondActivity extends AppCompatActivity {
     Observable<String> observable1;
     Observable<String> observable2;
 
-    Observer<String> observer1;
-    Observer<String> observer2;
+    DisposableObserver<String> observer1;
+    DisposableObserver<String> observer2;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -52,7 +50,7 @@ public class SecondActivity extends AppCompatActivity {
         initObservingItems();
         
         initListeners();
-        subscribeItems();
+
     }
 
     private void initViews() {
@@ -63,16 +61,22 @@ public class SecondActivity extends AppCompatActivity {
         eventTextView1 = findViewById(R.id.eventTextView1);
         eventTextView2 = findViewById(R.id.eventTextView2);
 
+        stopLeft = findViewById(R.id.stopLeft);
+        stopLeft.setText("Stop Left");
+
+        stopRight = findViewById(R.id.stopRight);
+        stopRight.setText("Stop Right");
+
+        startBus = findViewById(R.id.startBus);
+        startBus.setText("Start Bus");
     }
 
     private void initListeners() {
         editText.addTextChangedListener(watcher);
-        eventBusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                subject.onNext("Event!!!");
-            }
-        });
+        eventBusBtn.setOnClickListener(v -> subject.onNext("Event!!!"));
+        stopLeft.setOnClickListener(v -> observer1.dispose());
+        stopRight.setOnClickListener(v -> observer2.dispose());
+        startBus.setOnClickListener(v -> {subscribeItems(); startBus.setEnabled(false);});
     }
 
     private void subscribeItems() {
@@ -99,37 +103,19 @@ public class SecondActivity extends AppCompatActivity {
             }
         };
 
-        Function<Long, String> longToString = new Function<Long, String>() {
-            @Override
-            public String apply(Long aLong) throws Exception {
-                return aLong.toString();
-            }
-        };
+        Function<Long, String> longToString = aLong -> aLong.toString();
 
         observable1 = Observable.interval(1400, TimeUnit.MILLISECONDS).map(longToString).observeOn(AndroidSchedulers.mainThread());
 
-        observable2 = Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                try {
-                    String[] array = new String[]{"A", "B", "C", "D", "E", "F", "G", "H"};
-                    for (String s : array) {
-                        e.onNext(s);
-                        Thread.sleep(2000);
-                    }
-                } catch (InterruptedException exc) {
-                    e.onError(exc);
-                }
+        observable2 = Observable.create((ObservableOnSubscribe<String>) e -> {
+            String[] arr = new String[]{"A", "B", "C", "D", "E", "F", "G", "H"};
+            for (String s : arr) {
+                e.onNext(s);
+                Thread.sleep(2000);
             }
         }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread());
 
-
-        observer1 = new Observer<String>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
+        observer1 = new DisposableObserver<String>() {
             @Override
             public void onNext(String s) {
                 eventTextView1.setText(s);
@@ -146,12 +132,7 @@ public class SecondActivity extends AppCompatActivity {
             }
         };
 
-        observer2 = new Observer<String>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
+        observer2 = new DisposableObserver<String>() {
             @Override
             public void onNext(String s) {
                 eventTextView2.setText(s);
