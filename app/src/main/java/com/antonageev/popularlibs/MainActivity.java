@@ -1,11 +1,15 @@
 package com.antonageev.popularlibs;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,9 +30,16 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
         btnCounter1.setOnClickListener(this);
         btnCounter2.setOnClickListener(this);
         btnCounter3.setOnClickListener(this);
-        presenter = new Presenter(this);
+
+        if (savedInstanceState == null) {
+            presenter = new Presenter();
+        } else {
+            presenter = PresenterManager.getInstance().restorePresenter(savedInstanceState);
+        }
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         presenter.buttonClick(v.getId());
@@ -38,5 +49,31 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     public void setButtonText(int btnIndex, int value) {
         btnCounter = findViewById(btnIndex);
         btnCounter.setText("Количество = " + value);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        PresenterManager.getInstance().savePresenter(presenter, outState);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void showCounters(Map<Integer, Integer> map) {
+        setButtonText(R.id.btnCounter1, map.getOrDefault(R.id.btnCounter1, 0));
+        setButtonText(R.id.btnCounter2, map.getOrDefault(R.id.btnCounter2, 0));
+        setButtonText(R.id.btnCounter3, map.getOrDefault(R.id.btnCounter3, 0));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.bindView(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.unbindView();
     }
 }

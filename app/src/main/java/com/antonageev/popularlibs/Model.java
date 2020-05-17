@@ -1,21 +1,28 @@
 package com.antonageev.popularlibs;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Model{
-    private List<Integer> mList;
+    private Map<Integer, Integer> mMap;
     public Model(){
-        mList = new ArrayList<>(3);
-        mList.add(0);
-        mList.add(0);
-        mList.add(0);
-    }
-    public int getElementValueAtIndex(int _index){
-        return mList.get(_index);
-    }
-    public void setElementValueAtIndex(int _index, int value){
-        mList.set(_index, value);
+        mMap = new HashMap<>();
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public int getElementValueAtIndex(int _index){
+        return mMap.getOrDefault(_index, 0);
+    }
+    public void setElementValueAtIndex(int _index, int value){
+        mMap.put(_index, value);
+    }
+
+    public Map<Integer, Integer> getmMap() {
+        return mMap;
+    }
 }
