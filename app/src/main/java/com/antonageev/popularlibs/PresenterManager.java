@@ -2,9 +2,14 @@ package com.antonageev.popularlibs;
 
 import android.os.Bundle;
 
+import com.antonageev.popularlibs.presenters.BasePresenter;
+import com.antonageev.popularlibs.presenters.MainPresenter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+
+import io.reactivex.subjects.PublishSubject;
 
 public class PresenterManager {
     private static final String KEY_PRESENTER_ID = "presenterId";
@@ -31,7 +36,10 @@ public class PresenterManager {
     }
 
     public <P extends BasePresenter<?, ?>> P restorePresenter(Bundle savedInstanceState) {
-        long presenterId = savedInstanceState.getLong(KEY_PRESENTER_ID);
+        long presenterId = savedInstanceState.getLong(KEY_PRESENTER_ID, -1);
+
+        if (!presenters.containsKey(presenterId)) return (P) new MainPresenter();
+
         P presenter = (P) presenters.get(presenterId);
         presenters.remove(presenterId);
         return presenter;

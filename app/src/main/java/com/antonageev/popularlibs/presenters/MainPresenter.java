@@ -1,13 +1,16 @@
-package com.antonageev.popularlibs;
+package com.antonageev.popularlibs.presenters;
 
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-public class Presenter extends BasePresenter<Model, MainView>{
+import com.antonageev.popularlibs.MainView;
+import com.antonageev.popularlibs.Model;
 
-    public Presenter(){
+public class MainPresenter extends BasePresenter<Model, MainView> {
+
+    public MainPresenter(){
         model = new Model();
     }
 

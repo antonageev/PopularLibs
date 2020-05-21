@@ -1,13 +1,11 @@
-package com.antonageev.popularlibs;
-
-import java.lang.ref.WeakReference;
+package com.antonageev.popularlibs.presenters;
 
 public abstract class BasePresenter<M, V> {
     protected M model;
-    private WeakReference<V> view;
+    private V view;
 
     public void bindView(V view){
-        this.view = new WeakReference<>(view);
+        this.view = view;
         if (setupDone()){
             updateView();
         }
@@ -34,7 +32,7 @@ public abstract class BasePresenter<M, V> {
         if (view == null) {
             return null;
         } else {
-            return view.get();
+            return view;
         }
     }
 
