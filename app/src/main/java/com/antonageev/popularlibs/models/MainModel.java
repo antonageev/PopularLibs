@@ -1,4 +1,4 @@
-package com.antonageev.popularlibs;
+package com.antonageev.popularlibs.models;
 
 import android.os.Build;
 
@@ -7,9 +7,9 @@ import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Model{
+public class MainModel {
     private Map<Integer, Integer> mMap;
-    public Model(){
+    public MainModel(){
         mMap = new HashMap<>();
     }
 

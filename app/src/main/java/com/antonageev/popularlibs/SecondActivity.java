@@ -2,29 +2,30 @@ package com.antonageev.popularlibs;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.antonageev.popularlibs.presenters.SecondPresenter;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
-public class SecondActivity extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity implements SecondView {
     private EditText editText;
     private TextView textView;
-    TextWatcher watcher;
     Button eventBusBtn;
     Button stopLeft;
     Button stopRight;
@@ -32,6 +33,9 @@ public class SecondActivity extends AppCompatActivity {
     TextView eventTextView1;
     TextView eventTextView2;
     PublishSubject subject;
+    SecondPresenter secondPresenter;
+
+    Disposable disposable;
 
     Observable<String> observable1;
     Observable<String> observable2;
@@ -47,10 +51,37 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         initViews();
 
+        if (savedInstanceState == null) {
+            secondPresenter = new SecondPresenter();
+        } else {
+            secondPresenter = PresenterManager.getInstance().restorePresenter(savedInstanceState);
+        }
+
         initObservingItems();
         
         initListeners();
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        PresenterManager.getInstance().savePresenter(secondPresenter, outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Observable<String> textObservable = Observable.create(e -> editText.addTextChangedListener((SimpleTextWatcher) s -> e.onNext(s.toString())));
+
+        disposable = secondPresenter.bindView(textObservable, (s -> textView.setText(s)));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        secondPresenter.unbindView(disposable);
     }
 
     private void initViews() {
@@ -72,7 +103,7 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void initListeners() {
-        editText.addTextChangedListener(watcher);
+
         eventBusBtn.setOnClickListener(v -> subject.onNext("Event!!!"));
         stopLeft.setOnClickListener(v -> observer1.dispose());
         stopRight.setOnClickListener(v -> observer2.dispose());
@@ -88,20 +119,6 @@ public class SecondActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initObservingItems() {
-        watcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                textView.setText(s);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
 
         Function<Long, String> longToString = aLong -> aLong.toString();
 

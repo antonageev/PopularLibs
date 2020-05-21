@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     private Button btnCounter2;
     private Button btnCounter3;
     private Button btnMove;
+    private Button btnMoveTo3;
     private final String TAG = MainActivity.class.getSimpleName();
 
     Observable<Integer> observable;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
         btnCounter2.setOnClickListener(this);
         btnCounter3.setOnClickListener(this);
         btnMove.setOnClickListener(this);
+        btnMoveTo3.setOnClickListener(this);
     }
 
     private void initViews() {
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
         btnCounter2 = findViewById(R.id.btnCounter2);
         btnCounter3 = findViewById(R.id.btnCounter3);
         btnMove = findViewById(R.id.moveToAnotherActivity);
+        btnMoveTo3 = findViewById(R.id.btnMoveToThirdActivity);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -92,6 +95,12 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     public void onClick(View v) {
         if (v.getId() == R.id.moveToAnotherActivity) {
             Intent intent = new Intent(this, SecondActivity.class);
+            startActivity(intent);
+            return;
+        }
+
+        if (v.getId() == R.id.btnMoveToThirdActivity) {
+            Intent intent = new Intent(this, ThirdActivity.class);
             startActivity(intent);
             return;
         }

@@ -6,12 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.antonageev.popularlibs.MainView;
-import com.antonageev.popularlibs.Model;
+import com.antonageev.popularlibs.models.MainModel;
 
-public class MainPresenter extends BasePresenter<Model, MainView> {
+public class MainPresenter extends BasePresenter<MainModel, MainView> {
 
     public MainPresenter(){
-        model = new Model();
+        model = new MainModel();
     }
 
 
@@ -39,8 +39,7 @@ public class MainPresenter extends BasePresenter<Model, MainView> {
     public void bindView(@NonNull MainView view) {
         super.bindView(view);
         if (model == null) {
-            model = new Model();
+            setModel(new MainModel());
         }
-        updateView();
     }
 }

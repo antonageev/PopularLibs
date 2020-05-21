@@ -48,4 +48,11 @@
         android:layout_height="wrap_content"
         android:text="Ко второй активити"
         android:layout_gravity="bottom|center_horizontal"/>
+
+    <Button
+        android:id="@+id/btnMoveToThirdActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="К третьей активити"
+        android:layout_gravity="bottom|center_horizontal"/>
 </LinearLayout>
