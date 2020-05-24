@@ -55,4 +55,10 @@
         android:layout_height="wrap_content"
         android:text="К третьей активити"
         android:layout_gravity="bottom|center_horizontal"/>
+    <Button
+        android:id="@+id/btnMoveToFourthActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="К четвертой активити"
+        android:layout_gravity="bottom|center_horizontal"/>
 </LinearLayout>
