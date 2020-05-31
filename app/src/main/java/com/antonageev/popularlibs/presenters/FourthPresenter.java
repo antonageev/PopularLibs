@@ -7,10 +7,13 @@ import com.antonageev.popularlibs.IFourthPresenterCallBack;
 import com.antonageev.popularlibs.models.FourthModel;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class FourthPresenter extends BasePresenter<FourthModel, FourthView> implements IFourthPresenterCallBack {
 
     private final String TAG = FourthPresenter.class.getSimpleName();
+
+    private Disposable resultTextDisposable;
 
     public FourthPresenter() {
         model = new FourthModel(this);
@@ -18,6 +21,20 @@ public class FourthPresenter extends BasePresenter<FourthModel, FourthView> impl
 
     @Override
     protected void updateView() {
+        onModelUpdated();
+    }
+
+
+    public void bindView(FourthView view, Consumer<String> textConsumer) {
+        super.bindView(view);
+        resultTextDisposable = model.getSubject().subscribe(textConsumer);
+        model.getSubject().onNext(model.getResultText());
+    }
+
+    @Override
+    public void unbindView() {
+        super.unbindView();
+        if (resultTextDisposable != null && !resultTextDisposable.isDisposed()) resultTextDisposable.dispose();
 
     }
 
@@ -29,15 +46,37 @@ public class FourthPresenter extends BasePresenter<FourthModel, FourthView> impl
         return model.modelRequestSingleUser(user);
     }
 
+    public Disposable presenterUploadToRoom() {
+        return model.uploadToRoomDB();
+    }
+
+    public Disposable presenterGetDataFromRoom() {
+        return model.getFromRoomDB();
+    }
+
+    public Disposable presenterClearRoom() {
+        return model.deleteFromRoomDB();
+    }
+
+    public Disposable presenterUploadToSugar() {
+        return model.uploadToSugarDB();
+    }
+
+    public Disposable presenterGetDataFromSugar() {
+        return model.getFromSugarDB();
+    }
+
+    public Disposable presenterClearSugar() {
+        return model.deleteFromSugarDB();
+    }
+
     @Override
     public void onModelUpdated() {
         Log.wtf(TAG, "onModelUpdated invoked, view(): " + view());
-        if (view() != null){
+        if (view() != null && model != null){
             view().onUpdateViews(model.getListUsers());
         }
     }
-
-
 
     @Override
     public void onModelUpdateFailed() {
@@ -50,5 +89,10 @@ public class FourthPresenter extends BasePresenter<FourthModel, FourthView> impl
     @Override
     public void onSingleUserUpdated() {
         view().onShowMessageDialog(model.getTextDataAboutUser());
+    }
+
+    @Override
+    public void onDBResultReturned() {
+        view().onUpdateResultTextView(model.getResultText());
     }
 }

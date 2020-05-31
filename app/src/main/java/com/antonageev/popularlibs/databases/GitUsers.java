@@ -1,35 +1,24 @@
-package com.antonageev.popularlibs.models;
+package com.antonageev.popularlibs.databases;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 @Entity
-public class GitHubUsers{
+public class GitUsers {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
-    @ColumnInfo
-    @SerializedName("login")
-    @Expose
+    @ColumnInfo(name = "login")
     private String login;
 
-    @SerializedName("avatar_url")
-    @Expose
+    @ColumnInfo(name = "avatar_url")
     private String avatarUrl;
 
-    @SerializedName("url")
-    @Expose
+    @ColumnInfo(name = "url")
     private String url;
 
-    public GitHubUsers() {
+    public GitUsers() {
     }
 
-    public GitHubUsers(String login, String avatarUrl, String url) {
+    public GitUsers(String login, String avatarUrl, String url) {
         this.login = login;
         this.avatarUrl = avatarUrl;
         this.url = url;
@@ -57,13 +46,5 @@ public class GitHubUsers{
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }
