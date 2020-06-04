@@ -4,4 +4,5 @@ public interface IFourthPresenterCallBack {
     void onModelUpdated();
     void onModelUpdateFailed();
     void onSingleUserUpdated();
+    void onDBResultReturned();
 }
