@@ -56,11 +56,6 @@ public class FourthModel {
         return resultText;
     }
 
-    public String setResultText(String resultText) {
-        this.resultText = resultText;
-        return this.resultText;
-    }
-
     public List<GitHubUsers> getListUsers() {
         return listUsers;
     }
@@ -95,7 +90,7 @@ public class FourthModel {
                     public void onError(Throwable e) {
                         Log.wtf(TAG, "onError: failed to load single user data with Retrofit");
                         e.printStackTrace();
-                        iFourthPresenterCallBack.onModelUpdateFailed();
+                        iFourthPresenterCallBack.onModelUpdateFailed("failed to load single user data with Retrofit");
                     }
                 });
     }
@@ -114,7 +109,7 @@ public class FourthModel {
                     public void onError(Throwable e) {
                         Log.wtf(TAG, "onError: failed to load data with Retrofit");
                         e.printStackTrace();
-                        iFourthPresenterCallBack.onModelUpdateFailed();
+                        iFourthPresenterCallBack.onModelUpdateFailed("failed to load data with Retrofit");
                     }
                 });
     }

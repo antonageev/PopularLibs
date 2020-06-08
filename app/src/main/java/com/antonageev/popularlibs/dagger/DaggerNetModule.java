@@ -20,9 +20,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DaggerNetModule {
 
     @Provides
-    Retrofit getRetrofit() {
+    public String provideEndPoint() {
+        return "https://api.github.com";
+    }
+
+
+    @Provides
+    Retrofit getRetrofit(String endPoint) {
         return new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
+                .baseUrl(endPoint)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

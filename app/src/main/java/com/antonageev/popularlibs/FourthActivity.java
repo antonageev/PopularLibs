@@ -32,7 +32,7 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     private ProgressBar progressBar;
     private Button requestBtn, sugarUploadBtn, sugarGetBtn, sugarClearBtn, roomUploadBtn, roomGetBtn, roomClearBtn;
 
-    private List<GitHubUsers> users;
+//    private List<GitHubUsers> users;
 
     private RecyclerView recyclerView;
     private UsersListAdapter adapter;
@@ -62,7 +62,7 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
 
         setListeners();
 
-        initRecyclerView(users);
+        initRecyclerView(fourthPresenter.getListUsersFromModel());
 
         SugarContext.init(this);
     }
@@ -156,7 +156,6 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     }
 
     public void loadUsers() {
-//        NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             progressBar.setVisibility(View.VISIBLE);
             dLoadUsers = fourthPresenter.presenterLoadUsers();
@@ -165,17 +164,17 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
         }
     }
 
-//    private NetworkInfo getNetworkInfo() {
-//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        return cm.getActiveNetworkInfo();
-//    }
-
     @Override
     public void onUpdateViews(List<GitHubUsers> users) {
         progressBar.setVisibility(View.GONE);
-        this.users = users;
         adapter.setSource(users);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onShowToast(String message) {
+        progressBar.setVisibility(View.GONE);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
