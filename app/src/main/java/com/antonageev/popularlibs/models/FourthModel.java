@@ -6,10 +6,11 @@ import android.util.Log;
 import com.antonageev.popularlibs.App;
 import com.antonageev.popularlibs.Converter;
 import com.antonageev.popularlibs.IFourthPresenterCallBack;
-import com.antonageev.popularlibs.databases.GitUsers;
 import com.antonageev.popularlibs.databases.SugarModel;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -21,12 +22,17 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public class FourthModel {
+
+    @Inject
+    Retrofit retrofit;
+
+    @Inject
+    Single<List<GitHubUsers>> single;
 
     private final String TAG = FourthModel.class.getSimpleName();
     private IFourthPresenterCallBack iFourthPresenterCallBack;
@@ -35,6 +41,7 @@ public class FourthModel {
     public FourthModel(IFourthPresenterCallBack iFourthPresenterCallBack) {
         this.iFourthPresenterCallBack = iFourthPresenterCallBack;
         subject = PublishSubject.create();
+        App.getFourthModelComponent().injectToFourthModel(this);
     }
 
     private List<GitHubUsers> listUsers;
@@ -62,22 +69,11 @@ public class FourthModel {
         return textDataAboutUser;
     }
 
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://api.github.com")
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
     Retrofit retrofit2 = new Retrofit.Builder()
             .baseUrl("https://api.github.com")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())
             .build();
-
-    interface ApiGson {
-        @GET("/users")
-        Single<List<GitHubUsers>> loadUsers();
-    }
 
     interface ApiScalar {
         @GET("/users/{user}")
@@ -105,8 +101,6 @@ public class FourthModel {
     }
 
     public Disposable modelRequestUsers() {
-        ApiGson apiGson = retrofit.create(ApiGson.class);
-        Single<List<GitHubUsers>> single = apiGson.loadUsers();
         return single.retry(2).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<GitHubUsers>>() {
                     @Override

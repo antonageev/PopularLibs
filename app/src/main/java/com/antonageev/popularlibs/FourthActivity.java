@@ -23,6 +23,8 @@ import com.orm.SugarContext;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.disposables.Disposable;
 
 public class FourthActivity extends AppCompatActivity implements FourthView {
@@ -39,6 +41,8 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
 
     private TextView infoTextView;
 
+    @Inject
+    NetworkInfo networkInfo;
 
     private FourthPresenter fourthPresenter;
 
@@ -46,6 +50,7 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fourth);
+        App.getAppComponent().injectToFourthActivity(this);
 
         initViews();
 
@@ -80,7 +85,7 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     public void requestSingleUser(int position){
         try {
             String user = adapter.getSource().get(position).getLogin();
-            NetworkInfo networkInfo = getNetworkInfo();
+//            NetworkInfo networkInfo = getNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
                 progressBar.setVisibility(View.VISIBLE);
                 dLoadSingleUser = fourthPresenter.presenterLoadSingleUser(user);
@@ -151,7 +156,7 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     }
 
     public void loadUsers() {
-        NetworkInfo networkInfo = getNetworkInfo();
+//        NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             progressBar.setVisibility(View.VISIBLE);
             dLoadUsers = fourthPresenter.presenterLoadUsers();
@@ -160,10 +165,10 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
         }
     }
 
-    private NetworkInfo getNetworkInfo() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo();
-    }
+//    private NetworkInfo getNetworkInfo() {
+//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        return cm.getActiveNetworkInfo();
+//    }
 
     @Override
     public void onUpdateViews(List<GitHubUsers> users) {
@@ -188,7 +193,6 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
     @Override
     protected void onResume() {
         super.onResume();
-//        fourthPresenter.bindView(this);
         fourthPresenter.bindView(this, s -> infoTextView.setText(s));
     }
 
