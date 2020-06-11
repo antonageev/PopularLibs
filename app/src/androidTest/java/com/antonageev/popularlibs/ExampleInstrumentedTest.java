@@ -1,13 +1,12 @@
 package com.antonageev.popularlibs;
 
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.antonageev.popularlibs.dagger.DaggerNetModule;
 import com.antonageev.popularlibs.models.GitHubUsers;
 import com.antonageev.popularlibs.presenters.FourthPresenter;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

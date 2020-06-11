@@ -14,6 +14,7 @@ import com.antonageev.popularlibs.dagger.DaggerNetModule;
 import com.antonageev.popularlibs.dagger.FourthModelComponent;
 import com.antonageev.popularlibs.databases.GitDatabase;
 import com.antonageev.popularlibs.databases.GitHubUsersDao;
+import com.facebook.stetho.Stetho;
 
 public class App extends Application {
 
@@ -28,6 +29,13 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Stetho.InitializerBuilder initializerBuilder = Stetho.newInitializerBuilder(this);
+        initializerBuilder.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this));
+        initializerBuilder.enableDumpapp(Stetho.defaultDumperPluginsProvider(this));
+        Stetho.Initializer initializer = initializerBuilder.build();
+        Stetho.initialize(initializer);
+
         instance = this;
         Log.wtf(TAG, "onCreate: instance = " + instance);
         db = Room.databaseBuilder(getApplicationContext(), GitDatabase.class, "git_users")
