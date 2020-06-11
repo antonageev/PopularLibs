@@ -8,6 +8,11 @@
     tools:context=".FourthActivity">
 
     <Button
+        android:id="@+id/debugMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Debug Menu"/>
+    <Button
         android:id="@+id/requestBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -9,7 +9,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +32,7 @@ import io.reactivex.disposables.Disposable;
 public class FourthActivity extends AppCompatActivity implements FourthView {
 
     private ProgressBar progressBar;
-    private Button requestBtn, sugarUploadBtn, sugarGetBtn, sugarClearBtn, roomUploadBtn, roomGetBtn, roomClearBtn;
+    private Button requestBtn, sugarUploadBtn, sugarGetBtn, sugarClearBtn, roomUploadBtn, roomGetBtn, roomClearBtn, debugMenuBtn;
 
 //    private List<GitHubUsers> users;
 
@@ -118,6 +120,10 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
         roomUploadBtn = findViewById(R.id.roomUploadBtn);
         roomGetBtn = findViewById(R.id.roomGetBtn);
         roomClearBtn = findViewById(R.id.roomClearBtn);
+
+        debugMenuBtn = findViewById(R.id.debugMenuBtn);
+
+        if (!BuildConfig.BUILD_TYPE.equals("debug")) debugMenuBtn.setVisibility(View.GONE);
     }
 
     private void setListeners() {
@@ -129,6 +135,8 @@ public class FourthActivity extends AppCompatActivity implements FourthView {
         roomUploadBtn.setOnClickListener(v -> uploadToRoom());
         roomGetBtn.setOnClickListener(v -> getDataFromRoom());
         roomClearBtn.setOnClickListener(v -> clearRoom());
+
+        debugMenuBtn.setOnClickListener(v -> Toast.makeText(getApplicationContext(),"Debug Menu!!", Toast.LENGTH_SHORT).show());
     }
 
     private void uploadToRoom() {
