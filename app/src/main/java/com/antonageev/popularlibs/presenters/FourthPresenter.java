@@ -5,6 +5,9 @@ import android.util.Log;
 import com.antonageev.popularlibs.FourthView;
 import com.antonageev.popularlibs.IFourthPresenterCallBack;
 import com.antonageev.popularlibs.models.FourthModel;
+import com.antonageev.popularlibs.models.GitHubUsers;
+
+import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -17,6 +20,10 @@ public class FourthPresenter extends BasePresenter<FourthModel, FourthView> impl
 
     public FourthPresenter() {
         model = new FourthModel(this);
+    }
+
+    public List<GitHubUsers> getListUsersFromModel() {
+        return model.getListUsers();
     }
 
     @Override
@@ -79,10 +86,9 @@ public class FourthPresenter extends BasePresenter<FourthModel, FourthView> impl
     }
 
     @Override
-    public void onModelUpdateFailed() {
-        //TO DO: show message in Activity
+    public void onModelUpdateFailed(String message) {
         if (view() != null){
-            view().onUpdateViews(null);
+            view().onShowToast(message);
         }
     }
 
